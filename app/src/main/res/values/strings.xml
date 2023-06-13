@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Image Editor</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="create_photo_button">Create Photo Button</string>
+    <string name="choose_image_button">Choose Image Button</string>
+    <string name="done">Done</string>
+    <string name="share_image_button">Share Image Button</string>
+    <string name="save_image_button">Save Image Button</string>
+    <string name="rotate_button">Rotate Button</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="provider_authority">com.kirillmesh.imageeditor.provider</string>
+    <string name="back_button">Back Button</string>
+    <string name="next_button">Next Button</string>
+</resources>

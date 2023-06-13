@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/chooseImageFragment">
+
+    <fragment
+        android:id="@+id/saveImageFragment"
+        android:name="com.kirillmesh.imageeditor.SaveImageFragment"
+        android:label="fragment_save_image"
+        tools:layout="@layout/fragment_save_image" >
+        <action
+            android:id="@+id/action_saveImageFragment_to_chooseImageFragment"
+            app:destination="@id/chooseImageFragment"
+            app:popUpTo="@id/chooseImageFragment"
+            app:popUpToInclusive="true" />
+        <argument android:name="editedBitmapParcel"
+            app:argType="android.graphics.Bitmap" />
+    </fragment>
+    <fragment
+        android:id="@+id/chooseImageFragment"
+        android:name="com.kirillmesh.imageeditor.ChooseImageFragment"
+        android:label="fragment_choose_image"
+        tools:layout="@layout/fragment_choose_image" >
+        <action
+            android:id="@+id/action_chooseImageFragment_to_editImageFragment"
+            app:destination="@id/editImageFragment" />
+        <action
+            android:id="@+id/action_chooseImageFragment_to_cameraFragment"
+            app:destination="@id/cameraFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editImageFragment"
+        android:name="com.kirillmesh.imageeditor.EditImageFragment"
+        android:label="fragment_edit_image"
+        tools:layout="@layout/fragment_edit_image" >
+        <action
+            android:id="@+id/action_editImageFragment_to_saveImageFragment"
+            app:destination="@id/saveImageFragment" />
+        <action
+            android:id="@+id/action_editImageFragment_to_chooseImageFragment"
+            app:destination="@id/chooseImageFragment"
+            app:popUpTo="@id/chooseImageFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="originalBitmap"
+            app:argType="android.graphics.Bitmap" />
+    </fragment>
+    <fragment
+        android:id="@+id/cameraFragment"
+        android:name="com.kirillmesh.imageeditor.CameraFragment"
+        android:label="fragment_camera"
+        tools:layout="@layout/fragment_camera" >
+        <action
+            android:id="@+id/action_cameraFragment_to_editImageFragment"
+            app:destination="@id/editImageFragment" />
+        <action
+            android:id="@+id/action_cameraFragment_to_chooseImageFragment"
+            app:destination="@id/chooseImageFragment" />
+    </fragment>
+</navigation>
