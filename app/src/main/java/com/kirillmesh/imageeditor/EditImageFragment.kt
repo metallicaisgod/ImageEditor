@@ -4,19 +4,34 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnticipateOvershootInterpolator
+import android.widget.ImageView
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.transition.ChangeBounds
+import androidx.transition.TransitionManager
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.kirillmesh.imageeditor.adapters.EditingToolsAdapter
+import com.kirillmesh.imageeditor.adapters.FilterListener
+import com.kirillmesh.imageeditor.adapters.FilterViewAdapter
+import com.kirillmesh.imageeditor.adapters.ToolType
 import com.kirillmesh.imageeditor.databinding.FragmentEditImageBinding
-import ja.burhanrashid52.photoeditor.OnSaveBitmap
-import ja.burhanrashid52.photoeditor.PhotoEditor
+import ja.burhanrashid52.photoeditor.*
+import ja.burhanrashid52.photoeditor.shape.ShapeBuilder
+import ja.burhanrashid52.photoeditor.shape.ShapeType
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
-class EditImageFragment : Fragment() {
+class EditImageFragment : Fragment(), OnPhotoEditorListener, EditingToolsAdapter.OnItemSelected,
+    ShapeBSDFragment.Properties, StickerBSDFragment.StickerListener, EmojiBSDFragment.EmojiListener,
+    FilterListener {
 
     private lateinit var mPhotoEditor: PhotoEditor
 
@@ -27,6 +42,16 @@ class EditImageFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    private lateinit var mShapeBuilder: ShapeBuilder
+    private lateinit var mShapeBSDFragment: ShapeBSDFragment
+    private lateinit var mEmojiBSDFragment: EmojiBSDFragment
+    private lateinit var mStickerBSDFragment: StickerBSDFragment
+    private val mEditingToolsAdapter = EditingToolsAdapter(this)
+    private val mFilterViewAdapter = FilterViewAdapter(this)
+
+    private val mConstraintSet = ConstraintSet()
+    private var isEnvironmentViewVisible = false to 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,38 +66,277 @@ class EditImageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mPhotoEditor = PhotoEditor.Builder(requireContext(), binding.photoEditorView)
-            .setPinchTextScalable(true) // set flag to make text scalable when pinch
-            //.setDefaultTextTypeface(mTextRobotoTf)
-            //.setDefaultEmojiTypeface(mEmojiTypeFace)
-            .build() // build photo editor sdk
+        initViews()
 
-        // mPhotoEditor.setOnPhotoEditorListener(this)
+        with(binding) {
+            mPhotoEditor = PhotoEditor.Builder(requireContext(), photoEditorView)
+                .setPinchTextScalable(true) // set flag to make text scalable when pinch
+                //.setDefaultTextTypeface(mTextRobotoTf)
+                //.setDefaultEmojiTypeface(mEmojiTypeFace)
+                .build() // build photo editor sdk
 
-        binding.photoEditorView.source.setImageBitmap(args.originalBitmap)
-        // binding.photoEditorView.source.scaleType = ImageView.ScaleType.CENTER_CROP
-        binding.imgNext.setOnClickListener {
-            mPhotoEditor.saveAsBitmap(object : OnSaveBitmap {
+            mPhotoEditor.setOnPhotoEditorListener(this@EditImageFragment)
 
-                override fun onBitmapReady(saveBitmap: Bitmap?) {
-                    if (saveBitmap != null) {
-                        findNavController().navigate(
-                            EditImageFragmentDirections.actionEditImageFragmentToSaveImageFragment(
-                                saveBitmap
+            photoEditorView.source.setImageBitmap(args.originalBitmap)
+            photoEditorView.source.scaleType = ImageView.ScaleType.CENTER_CROP
+            nextImageView.setOnClickListener {
+                if (isEnvironmentViewVisible.first &&
+                    isEnvironmentViewVisible.second == cropButtons.id
+                ) {
+                    cropImageView.isVisible = false
+                    showEnvironment(false, cropButtons.id)
+                    cropImageView.isVisible = true
+                }
+
+                mPhotoEditor.saveAsBitmap(object : OnSaveBitmap {
+
+                    override fun onBitmapReady(saveBitmap: Bitmap?) {
+                        if (saveBitmap != null) {
+                            findNavController().navigate(
+                                EditImageFragmentDirections.actionEditImageFragmentToSaveImageFragment(
+                                    saveBitmap
+                                )
                             )
-                        )
+                        }
                     }
+
+                    override fun onFailure(e: Exception?) {
+                        Log.d("EditImageFragment", e?.message.toString())
+                    }
+                })
+            }
+
+            backImageView.setOnClickListener {
+
+                if (isEnvironmentViewVisible.first) {
+                    with(binding) {
+                        showEnvironment(false, isEnvironmentViewVisible.second)
+                        if (isEnvironmentViewVisible.second == cropButtons.id) {
+                            cropImageView.isVisible = false
+                            photoEditorView.isVisible = true
+                        }
+                        currentToolTextView.setText(R.string.app_name)
+                    }
+//                } else if (!mPhotoEditor.isCacheEmpty) {
+//                    showSaveDialog()
+                } else {
+                    findNavController().navigate(R.id.action_editImageFragment_to_chooseImageFragment)
+                }
+            }
+        }
+    }
+
+    private fun initViews() {
+
+        binding.toolsRecyclerView.adapter = EditingToolsAdapter(this)
+
+        mShapeBSDFragment = ShapeBSDFragment()
+        mShapeBSDFragment.setPropertiesChangeListener(this)
+
+        mStickerBSDFragment = StickerBSDFragment()
+        mStickerBSDFragment.setStickerListener(this)
+        mEmojiBSDFragment = EmojiBSDFragment()
+        mEmojiBSDFragment.setEmojiListener(this)
+
+        with(binding) {
+            cropButtons.setOnButtonsClickListener(object : CropToolsView.OnButtonsClickListener {
+                override fun onRotate() {
+                    cropImageView.rotateImage(90)
                 }
 
-                override fun onFailure(e: Exception?) {
-                    Log.d("EditImageFragment", e?.message.toString())
+                override fun onDone() {
+                    cropImageView.isVisible = false
+                    cropImageView.croppedImageAsync()
+                    showEnvironment(false, cropButtons.id)
+                    cropImageView.isVisible = true
                 }
+
             })
+            cropImageView.setOnCropImageCompleteListener { _, result ->
+                photoEditorView.source.setImageBitmap(result.bitmap)
+            }
+
+            toolsRecyclerView.adapter = mEditingToolsAdapter
+
+            filtersRecyclerView.adapter = mFilterViewAdapter
         }
+
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onToolSelected(toolType: ToolType) {
+        binding.cropImageView.visibility = View.GONE
+        when (toolType) {
+            ToolType.SHAPE -> {
+                mPhotoEditor.setBrushDrawingMode(true)
+                mShapeBuilder = ShapeBuilder()
+                mPhotoEditor.setShape(mShapeBuilder)
+                binding.currentToolTextView.setText(R.string.label_shape)
+                showBottomSheetDialogFragment(mShapeBSDFragment)
+            }
+
+            ToolType.TEXT -> {
+                val textEditorDialogFragment = TextEditorDialogFragment.show(requireActivity())
+                textEditorDialogFragment.setOnTextEditorListener(object :
+                    TextEditorDialogFragment.TextEditorListener {
+                    override fun onDone(inputText: String, colorCode: Int) {
+                        val styleBuilder = TextStyleBuilder()
+                        styleBuilder.withTextColor(colorCode)
+                        mPhotoEditor.addText(inputText, styleBuilder)
+                        binding.currentToolTextView.setText(R.string.label_text)
+                    }
+                })
+            }
+
+            ToolType.ERASER -> {
+                mPhotoEditor.brushEraser()
+                binding.currentToolTextView.setText(R.string.label_eraser_mode)
+            }
+
+            ToolType.FILTER -> {
+                binding.currentToolTextView.setText(R.string.label_filter)
+                showEnvironment(true, binding.filtersRecyclerView.id)
+            }
+
+            ToolType.CROP -> {
+                binding.currentToolTextView.setText(R.string.label_crop_rotate)
+                binding.photoEditorView.isVisible = false
+                mPhotoEditor.saveAsBitmap(object : OnSaveBitmap {
+
+                    override fun onBitmapReady(saveBitmap: Bitmap?) {
+                        binding.cropImageView.setImageBitmap(saveBitmap)
+                    }
+
+                    override fun onFailure(e: Exception?) {
+                        Log.d("EditImageFragment", "Fail on save Bitmap")
+                    }
+                })
+
+                showEnvironment(true, binding.cropButtons.id)
+                binding.cropImageView.visibility = View.VISIBLE
+            }
+
+            ToolType.EMOJI -> showBottomSheetDialogFragment(mEmojiBSDFragment)
+            ToolType.STICKER -> showBottomSheetDialogFragment(mStickerBSDFragment)
+        }
+    }
+
+    private fun showBottomSheetDialogFragment(fragment: BottomSheetDialogFragment?) {
+        if (fragment == null || fragment.isAdded) {
+            return
+        }
+        fragment.show(requireActivity().supportFragmentManager, fragment.tag)
+    }
+
+    override fun onColorChanged(colorCode: Int) {
+        mPhotoEditor.setShape(mShapeBuilder.withShapeColor(colorCode))
+        binding.currentToolTextView.setText(R.string.label_brush)
+    }
+
+    override fun onOpacityChanged(opacity: Int) {
+        mPhotoEditor.setShape(mShapeBuilder.withShapeOpacity(opacity))
+        binding.currentToolTextView.setText(R.string.label_brush)
+    }
+
+    override fun onShapeSizeChanged(shapeSize: Int) {
+        mPhotoEditor.setShape(mShapeBuilder.withShapeSize(shapeSize.toFloat()))
+        binding.currentToolTextView.setText(R.string.label_brush)
+    }
+
+    override fun onShapePicked(shapeType: ShapeType) {
+        mPhotoEditor.setShape(mShapeBuilder.withShapeType(shapeType))
+    }
+
+    private fun showEnvironment(isVisible: Boolean, viewId: Int) {
+        isEnvironmentViewVisible = isVisible to viewId
+        mConstraintSet.clone(binding.rootView)
+
+        if (isVisible) {
+            mConstraintSet.clear(viewId, ConstraintSet.START)
+            mConstraintSet.connect(
+                viewId, ConstraintSet.START,
+                ConstraintSet.PARENT_ID, ConstraintSet.START
+            )
+            mConstraintSet.connect(
+                viewId, ConstraintSet.END,
+                ConstraintSet.PARENT_ID, ConstraintSet.END
+            )
+        } else {
+            mConstraintSet.connect(
+                viewId, ConstraintSet.START,
+                ConstraintSet.PARENT_ID, ConstraintSet.END
+            )
+            mConstraintSet.clear(viewId, ConstraintSet.END)
+        }
+
+        val changeBounds = ChangeBounds()
+        changeBounds.duration = 350
+        changeBounds.interpolator = AnticipateOvershootInterpolator(1.0f)
+        TransitionManager.beginDelayedTransition(binding.rootView, changeBounds)
+
+        mConstraintSet.applyTo(binding.rootView)
+    }
+
+    override fun onEmojiClick(emojiUnicode: String) {
+        mPhotoEditor.addEmoji(emojiUnicode)
+        binding.currentToolTextView.setText(R.string.label_emoji)
+    }
+
+    override fun onStickerClick(bitmap: Bitmap) {
+        mPhotoEditor.addImage(bitmap)
+        binding.currentToolTextView.setText(R.string.label_sticker)
+    }
+
+    override fun onFilterSelected(photoFilter: PhotoFilter) {
+        mPhotoEditor.setFilterEffect(photoFilter)
+    }
+
+    override fun onAddViewListener(viewType: ViewType?, numberOfAddedViews: Int) {
+        Log.d(
+            TAG,
+            "onAddViewListener() called with: viewType = [$viewType], numberOfAddedViews = [$numberOfAddedViews]"
+        )
+    }
+
+    override fun onEditTextChangeListener(rootView: View?, text: String?, colorCode: Int) {
+        val textEditorDialogFragment =
+            TextEditorDialogFragment.show(requireActivity(), text.toString(), colorCode)
+        textEditorDialogFragment.setOnTextEditorListener(object :
+            TextEditorDialogFragment.TextEditorListener {
+            override fun onDone(inputText: String, colorCode: Int) {
+                val styleBuilder = TextStyleBuilder()
+                styleBuilder.withTextColor(colorCode)
+                mPhotoEditor.editText(binding.rootView, inputText, styleBuilder)
+                binding.currentToolTextView.setText(R.string.label_text)
+            }
+        })
+    }
+
+    override fun onRemoveViewListener(viewType: ViewType?, numberOfAddedViews: Int) {
+        Log.d(
+            TAG,
+            "onRemoveViewListener() called with: viewType = [$viewType], numberOfAddedViews = [$numberOfAddedViews]"
+        )
+    }
+
+    override fun onStartViewChangeListener(viewType: ViewType?) {
+        Log.d(TAG, "onStartViewChangeListener() called with: viewType = [$viewType]")
+    }
+
+    override fun onStopViewChangeListener(viewType: ViewType?) {
+        Log.d(TAG, "onStopViewChangeListener() called with: viewType = [$viewType]")
+    }
+
+    override fun onTouchSourceImage(event: MotionEvent?) {
+        Log.d(TAG, "onTouchView() called with: event = [$event]")
+    }
+
+    companion object {
+
+        private const val TAG = "EditImageFragment"
     }
 }

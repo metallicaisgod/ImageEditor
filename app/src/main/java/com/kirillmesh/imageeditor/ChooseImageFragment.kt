@@ -73,7 +73,12 @@ class ChooseImageFragment : Fragment() {
                                         requireActivity().contentResolver,
                                         it
                                     )
-                                ImageDecoder.decodeBitmap(source)
+                                ImageDecoder.decodeBitmap(source) {
+                                        decoder,
+                                        _,
+                                        _ ->
+                                    decoder.isMutableRequired = true
+                                }
                             } else {
                                 // support older versions of Android by using getBitmap
                                 MediaStore.Images.Media.getBitmap(

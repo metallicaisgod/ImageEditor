@@ -26,9 +26,6 @@
         <action
             android:id="@+id/action_chooseImageFragment_to_editImageFragment"
             app:destination="@id/editImageFragment" />
-        <action
-            android:id="@+id/action_chooseImageFragment_to_cameraFragment"
-            app:destination="@id/cameraFragment" />
     </fragment>
     <fragment
         android:id="@+id/editImageFragment"
@@ -46,17 +43,5 @@
         <argument
             android:name="originalBitmap"
             app:argType="android.graphics.Bitmap" />
-    </fragment>
-    <fragment
-        android:id="@+id/cameraFragment"
-        android:name="com.kirillmesh.imageeditor.CameraFragment"
-        android:label="fragment_camera"
-        tools:layout="@layout/fragment_camera" >
-        <action
-            android:id="@+id/action_cameraFragment_to_editImageFragment"
-            app:destination="@id/editImageFragment" />
-        <action
-            android:id="@+id/action_cameraFragment_to_chooseImageFragment"
-            app:destination="@id/chooseImageFragment" />
     </fragment>
 </navigation>
