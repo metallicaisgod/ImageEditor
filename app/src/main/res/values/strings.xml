@@ -38,6 +38,7 @@
     <string name="close">Close</string>
     <string name="opacity">Opacity</string>
     <string name="shape">Shape</string>
+    <string name="size">Size</string>
 
     <string-array name="photo_editor_emoji">
 

@@ -2,12 +2,16 @@ package com.kirillmesh.imageeditor.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
 import androidx.core.content.ContextCompat
+import androidx.core.view.setPadding
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.kirillmesh.imageeditor.R
-import java.util.ArrayList
+import com.kirillmesh.imageeditor.databinding.ColorPickerItemListBinding
+import com.kirillmesh.imageeditor.databinding.ColorPickerItemListCheckedBinding
 
 /**
  * Created by Ahmed Adel on 5/8/17.
@@ -15,42 +19,81 @@ import java.util.ArrayList
 class ColorPickerAdapter internal constructor(
     private var context: Context,
     colorPickerColors: List<Int>
-) : RecyclerView.Adapter<ColorPickerAdapter.ViewHolder>() {
-    private var inflater: LayoutInflater
+) : RecyclerView.Adapter<ColorPickerAdapter.ColorViewHolder>() {
+
     private val colorPickerColors: List<Int>
+    private var currentColor = ContextCompat.getColor((context), R.color.black)
+
     private lateinit var onColorPickerClickListener: OnColorPickerClickListener
 
     internal constructor(context: Context) : this(context, getDefaultColors(context)) {
         this.context = context
-        inflater = LayoutInflater.from(context)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = inflater.inflate(R.layout.color_picker_item_list, parent, false)
-        return ViewHolder(view)
+    init {
+        this.colorPickerColors = colorPickerColors
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.colorPickerView.setBackgroundColor(colorPickerColors[position])
+    class ColorViewHolder(val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ColorViewHolder {
+
+        val layoutId = when(viewType) {
+            CHECKED_ITEM -> R.layout.color_picker_item_list_checked
+            UNCHECKED_ITEM -> R.layout.color_picker_item_list
+            else -> R.layout.color_picker_item_list
+        }
+
+        val binding = DataBindingUtil.inflate<ViewDataBinding>(
+            LayoutInflater.from(parent.context),
+            layoutId,
+            parent,
+false
+        )
+        return ColorViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: ColorViewHolder, position: Int) {
+
+        val colorId = colorPickerColors[position]
+        val binding = holder.binding
+        binding.root.setOnClickListener{
+            onColorPickerClickListener.onColorPickerClickListener(
+                    colorPickerColors[position]
+                )
+            currentColor = colorPickerColors[position]
+            notifyDataSetChanged()
+
+        }
+        when(binding){
+            is ColorPickerItemListBinding -> {
+                binding.colorPickerView.setBackgroundColor(colorId)
+            }
+            is ColorPickerItemListCheckedBinding -> {
+                binding.colorPickerView.setBackgroundColor(colorId)
+            }
+        }
     }
 
     override fun getItemCount(): Int {
         return colorPickerColors.size
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return if (colorPickerColors[position] == currentColor) {
+            CHECKED_ITEM
+        } else {
+            UNCHECKED_ITEM
+        }
+    }
+
     fun setOnColorPickerClickListener(onColorPickerClickListener: OnColorPickerClickListener) {
         this.onColorPickerClickListener = onColorPickerClickListener
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var colorPickerView: View = itemView.findViewById(R.id.color_picker_view)
-
-        init {
-            itemView.setOnClickListener {
-                onColorPickerClickListener.onColorPickerClickListener(
-                    colorPickerColors[adapterPosition]
-                )
-            }
+    fun setCurrentColor(colorId: Int){
+        if(colorId != Int.MAX_VALUE) {
+            currentColor = colorId
         }
     }
 
@@ -59,6 +102,10 @@ class ColorPickerAdapter internal constructor(
     }
 
     companion object {
+
+        private const val CHECKED_ITEM = 1001
+        private const val UNCHECKED_ITEM = 1002
+
         fun getDefaultColors(context: Context): List<Int> {
             val colorPickerColors = ArrayList<Int>()
             colorPickerColors.add(ContextCompat.getColor((context), R.color.blue_color_picker))
@@ -92,8 +139,5 @@ class ColorPickerAdapter internal constructor(
         }
     }
 
-    init {
-        inflater = LayoutInflater.from(context)
-        this.colorPickerColors = colorPickerColors
-    }
+
 }
