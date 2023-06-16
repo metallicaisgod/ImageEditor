@@ -1,13 +1,11 @@
 package com.kirillmesh.imageeditor
 
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioGroup
 import android.widget.SeekBar
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -47,15 +45,8 @@ class ShapeDialogFragment : BottomSheetDialogFragment(), SeekBar.OnSeekBarChange
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-       val shapeProperties = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-            requireArguments().getParcelable(EXTRA_INPUT_PROPERTIES, ShapeProperties::class.java)
-        } else {
-            requireArguments().getParcelable(EXTRA_INPUT_PROPERTIES)
-        }
-        shapeProperties?.let{
-            currentProperties = it
-        }
+        shapePropertiesViewModel.getCurrentShapeProperties()
+        currentProperties = shapePropertiesViewModel.shapeProperties.value ?: ShapeProperties()
 
         with(binding) {
             when(currentProperties.shapeType) {
@@ -141,17 +132,11 @@ class ShapeDialogFragment : BottomSheetDialogFragment(), SeekBar.OnSeekBarChange
     companion object {
 
         private val TAG: String = ShapeDialogFragment::class.java.simpleName
-        private const val EXTRA_INPUT_PROPERTIES = "extra_input_properties"
 
-        @JvmOverloads
         fun show(
-            fragmentActivity: FragmentActivity,
-            shapeProperties: ShapeProperties = ShapeProperties()
+            fragmentActivity: FragmentActivity
         ): ShapeDialogFragment {
-            val args = Bundle()
-            args.putParcelable(EXTRA_INPUT_PROPERTIES, shapeProperties)
             val fragment = ShapeDialogFragment()
-            fragment.arguments = args
             fragment.show(fragmentActivity.supportFragmentManager, TAG)
             return fragment
         }

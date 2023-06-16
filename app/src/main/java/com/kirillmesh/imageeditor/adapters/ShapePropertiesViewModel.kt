@@ -13,6 +13,10 @@ class ShapePropertiesViewModel : ViewModel() {
 
     private var currentShapeProperties = ShapeProperties()
 
+    fun getCurrentShapeProperties(){
+        _shapeProperties.value = currentShapeProperties
+    }
+
     fun setColor(colorCode: Int){
         currentShapeProperties =
             currentShapeProperties.copy(colorCode = colorCode)

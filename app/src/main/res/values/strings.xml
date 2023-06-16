@@ -39,6 +39,9 @@
     <string name="opacity">Opacity</string>
     <string name="shape">Shape</string>
     <string name="size">Size</string>
+    <string name="edit_another_image">Edit Another Image</string>
+    <string name="result_edited_image">Result edited image</string>
+    <string name="share_your_iamge">Share your image!</string>
 
     <string-array name="photo_editor_emoji">
 

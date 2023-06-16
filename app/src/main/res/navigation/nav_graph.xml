@@ -15,7 +15,7 @@
             app:destination="@id/chooseImageFragment"
             app:popUpTo="@id/chooseImageFragment"
             app:popUpToInclusive="true" />
-        <argument android:name="editedBitmapParcel"
+        <argument android:name="editedBitmap"
             app:argType="android.graphics.Bitmap" />
     </fragment>
     <fragment

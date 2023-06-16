@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.BitmapFactory.Options
 import android.graphics.ImageDecoder
 import android.graphics.Matrix
 import androidx.exifinterface.media.ExifInterface
@@ -50,7 +51,10 @@ class ChooseImageFragment : Fragment() {
                 if (result.resultCode == Activity.RESULT_OK) {
                     val data = result.data
                     if (data == null) {
-                        val photo = BitmapFactory.decodeFile(currentPhotoPath)
+                        val photo = BitmapFactory.decodeFile(
+                            currentPhotoPath,
+                            Options().also { it.inSampleSize = 4 }
+                        )
                         val orientation: Int = ExifInterface(currentPhotoPath).getAttributeInt(
                             ExifInterface.TAG_ORIENTATION,
                             ExifInterface.ORIENTATION_UNDEFINED

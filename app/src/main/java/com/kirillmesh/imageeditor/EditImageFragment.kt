@@ -23,7 +23,6 @@ import com.kirillmesh.imageeditor.adapters.*
 import com.kirillmesh.imageeditor.databinding.FragmentEditImageBinding
 import ja.burhanrashid52.photoeditor.*
 import ja.burhanrashid52.photoeditor.shape.ShapeBuilder
-import ja.burhanrashid52.photoeditor.shape.ShapeType
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -32,16 +31,12 @@ class EditImageFragment : Fragment(), OnPhotoEditorListener, EditingToolsAdapter
     StickerBSDFragment.StickerListener, EmojiBSDFragment.EmojiListener,
     FilterListener {
 
-    private lateinit var mPhotoEditor: PhotoEditor
-
     private val args by navArgs<EditImageFragmentArgs>()
 
     private var _binding: FragmentEditImageBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
+    private lateinit var mPhotoEditor: PhotoEditor
     private lateinit var mShapeBuilder: ShapeBuilder
     private lateinit var mEmojiBSDFragment: EmojiBSDFragment
     private lateinit var mStickerBSDFragment: StickerBSDFragment
@@ -180,16 +175,16 @@ class EditImageFragment : Fragment(), OnPhotoEditorListener, EditingToolsAdapter
             cropImageView.visibility = View.GONE
             when (toolType) {
                 ToolType.SHAPE -> {
-                    mPhotoEditor.setBrushDrawingMode(true)
-                    mShapeBuilder = ShapeBuilder()
-                    mPhotoEditor.setShape(mShapeBuilder)
                     currentToolTextView.setText(R.string.label_shape)
-                    val shapeDialogFragment = ShapeDialogFragment.show(requireActivity(), shapeProperties)
+                    val shapeDialogFragment =
+                        ShapeDialogFragment.show(requireActivity())
                     shapeDialogFragment.setShapePropertiesListener(object :
                     ShapeDialogFragment.ShapePropertiesListener {
                         @SuppressLint("ResourceAsColor")
                         override fun done(exitCode: ShapeDialogFragment.ExitCode) {
                             if(exitCode == ShapeDialogFragment.ExitCode.EXIT_OK){
+                                mPhotoEditor.setBrushDrawingMode(true)
+                                mShapeBuilder = ShapeBuilder()
                                 mPhotoEditor.setShape(
                                     mShapeBuilder.withShapeType(shapeProperties.shapeType)
                                         .withShapeOpacity(shapeProperties.opacity)
