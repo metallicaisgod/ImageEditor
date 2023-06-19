@@ -16,8 +16,8 @@ class EditingToolsAdapter(private val mOnItemSelected: OnItemSelected) :
     }
 
     internal inner class ToolModel(
-        val mToolName: String,
-        val mToolIcon: Int,
+        val mToolNameId: Int,
+        val mToolIconId: Int,
         val mToolType: ToolType
     )
 
@@ -33,8 +33,8 @@ class EditingToolsAdapter(private val mOnItemSelected: OnItemSelected) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mToolList[position]
         with(holder.binding) {
-            toolNameTextView.text = item.mToolName
-            toolIconImageView.setImageResource(item.mToolIcon)
+            toolNameTextView.setText(item.mToolNameId)
+            toolIconImageView.setImageResource(item.mToolIconId)
         }
     }
 
@@ -54,12 +54,12 @@ class EditingToolsAdapter(private val mOnItemSelected: OnItemSelected) :
     }
 
     init {
-        mToolList.add(ToolModel("Crop", R.drawable.ic_crop, ToolType.CROP))
-        mToolList.add(ToolModel("Shape", R.drawable.ic_oval, ToolType.SHAPE))
-        mToolList.add(ToolModel("Text", R.drawable.ic_text, ToolType.TEXT))
-        mToolList.add(ToolModel("Eraser", R.drawable.ic_eraser, ToolType.ERASER))
-        mToolList.add(ToolModel("Filter", R.drawable.ic_photo_filter, ToolType.FILTER))
-        mToolList.add(ToolModel("Emoji", R.drawable.ic_insert_emoticon, ToolType.EMOJI))
-        mToolList.add(ToolModel("Sticker", R.drawable.ic_sticker, ToolType.STICKER))
+        mToolList.add(ToolModel(R.string.label_crop, R.drawable.ic_crop, ToolType.CROP))
+        mToolList.add(ToolModel(R.string.label_shape, R.drawable.ic_oval, ToolType.SHAPE))
+        mToolList.add(ToolModel(R.string.label_text, R.drawable.ic_text, ToolType.TEXT))
+        mToolList.add(ToolModel(R.string.label_eraser, R.drawable.ic_eraser, ToolType.ERASER))
+        mToolList.add(ToolModel(R.string.label_filter, R.drawable.ic_photo_filter, ToolType.FILTER))
+        mToolList.add(ToolModel(R.string.label_emoji, R.drawable.ic_insert_emoticon, ToolType.EMOJI))
+        mToolList.add(ToolModel(R.string.label_sticker, R.drawable.ic_sticker, ToolType.STICKER))
     }
 }

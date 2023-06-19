@@ -6,6 +6,58 @@
     android:layout_height="match_parent"
     tools:context=".ChooseImageFragment">
 
+
+    <ImageView
+        android:id="@+id/editedImageView"
+        android:layout_width="0dp"
+        android:layout_height="450dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:adjustViewBounds="true"
+        android:background="#050505"
+        android:contentDescription="@string/result_edited_image"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/avatars" />
+
+    <Button
+        android:id="@+id/sharePhotoButton"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="48dp"
+        android:backgroundTint="#020202"
+        android:contentDescription="@string/share_image_button"
+        android:drawableLeft="@drawable/ic_share"
+        android:padding="8dp"
+        android:text="@string/share"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toStartOf="@+id/savePhotoButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editedImageView" />
+
+    <Button
+        android:id="@+id/savePhotoButton"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="30dp"
+        android:backgroundTint="#020202"
+        android:contentDescription="@string/save_image_button"
+        android:drawableLeft="@drawable/ic_save"
+        android:padding="8dp"
+        android:text="@string/save"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/sharePhotoButton"
+        app:layout_constraintTop_toTopOf="@+id/sharePhotoButton" />
+
+
     <TextView
         android:id="@+id/editAnotherImageTextView"
         android:layout_width="wrap_content"
@@ -21,52 +73,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/savePhotoImageView" />
-
-    <ImageView
-        android:id="@+id/sharePhotoImageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="78dp"
-        android:layout_marginTop="50dp"
-        android:background="#020202"
-        android:contentDescription="@string/share_image_button"
-        android:padding="8dp"
-        android:src="@drawable/ic_share"
-        app:layout_constraintEnd_toStartOf="@+id/savePhotoImageView"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editedImegeVIew" />
-
-    <ImageView
-        android:id="@+id/savePhotoImageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginEnd="78dp"
-        android:background="#020202"
-        android:contentDescription="@string/save_image_button"
-        android:padding="8dp"
-        android:src="@drawable/ic_save"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/sharePhotoImageView"
-        app:layout_constraintTop_toTopOf="@+id/sharePhotoImageView" />
-
-    <ImageView
-        android:id="@+id/editedImegeVIew"
-        android:layout_width="0dp"
-        android:layout_height="400dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:adjustViewBounds="true"
-        android:background="#050505"
-        android:scaleType="fitCenter"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@tools:sample/avatars"
-        android:contentDescription="@string/result_edited_image" />
+        app:layout_constraintTop_toBottomOf="@+id/savePhotoButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

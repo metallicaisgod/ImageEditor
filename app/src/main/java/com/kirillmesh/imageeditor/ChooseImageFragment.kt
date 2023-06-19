@@ -7,7 +7,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.BitmapFactory.Options
 import android.graphics.ImageDecoder
-import android.graphics.Matrix
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -60,9 +59,9 @@ class ChooseImageFragment : Fragment() {
                             ExifInterface.ORIENTATION_UNDEFINED
                         )
                         val rotatedBitmap = when (orientation) {
-                            ExifInterface.ORIENTATION_ROTATE_90 -> rotateImage(photo, 90f)
-                            ExifInterface.ORIENTATION_ROTATE_180 -> rotateImage(photo, 180f)
-                            ExifInterface.ORIENTATION_ROTATE_270 -> rotateImage(photo, 270f)
+                            ExifInterface.ORIENTATION_ROTATE_90 -> Utils.rotateImage(photo, 90f)
+                            ExifInterface.ORIENTATION_ROTATE_180 -> Utils.rotateImage(photo, 180f)
+                            ExifInterface.ORIENTATION_ROTATE_270 -> Utils.rotateImage(photo, 270f)
                             ExifInterface.ORIENTATION_NORMAL -> photo
                             else -> photo
                         }
@@ -90,7 +89,7 @@ class ChooseImageFragment : Fragment() {
                                     it
                                 )
                             }
-                            callEditFragment(photo)
+                            callEditFragment(Utils.resizePhoto(photo, 4))
                         }
                     }
                 }
@@ -108,16 +107,6 @@ class ChooseImageFragment : Fragment() {
         }
     }
 
-    private fun rotateImage(source: Bitmap, angle: Float): Bitmap? {
-
-        val matrix = Matrix()
-        matrix.postRotate(angle)
-        return Bitmap.createBitmap(
-            source, 0, 0, source.width, source.height,
-            matrix, true
-        )
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -133,8 +122,14 @@ class ChooseImageFragment : Fragment() {
         binding.createPhotoImageView.setOnClickListener {
             takePhotoFromCamera()
         }
+        binding.createPhotoButton.setOnClickListener {
+            takePhotoFromCamera()
+        }
 
         binding.choosePhotoImageView.setOnClickListener {
+            choosePhotoFromGallery()
+        }
+        binding.choosePhotoButton.setOnClickListener {
             choosePhotoFromGallery()
         }
     }

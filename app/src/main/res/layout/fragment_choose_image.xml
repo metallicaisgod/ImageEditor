@@ -6,38 +6,81 @@
     android:layout_height="match_parent"
     tools:context=".ChooseImageFragment">
 
-    <ImageView
-        android:id="@+id/createPhotoImageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="50dp"
-        android:background="#020202"
-        android:contentDescription="@string/create_photo_button"
-        android:padding="8dp"
-        android:src="@drawable/ic_camera_alt_24"
-        app:layout_constraintBottom_toTopOf="@+id/choosePhotoImageView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/choosePhotoImageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="100dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/createPhotoLayout"
+        android:layout_width="300dp"
+        android:layout_height="195dp"
         android:layout_marginTop="50dp"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="100dp"
-        android:background="#020202"
-        android:contentDescription="@string/choose_image_button"
-        android:padding="8dp"
-        android:src="@drawable/ic_image_24"
+        app:layout_constraintBottom_toTopOf="@+id/choosePhotoLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/createPhotoImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:contentDescription="@string/create_photo_button"
+            android:src="@drawable/knopka_camera_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/createPhotoButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#020202"
+            android:drawableLeft="@drawable/ic_camera_alt_24"
+            android:padding="8dp"
+            android:paddingStart="75dp"
+            android:paddingEnd="75dp"
+            android:text="@string/create_photo"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/choosePhotoLayout"
+        android:layout_width="300dp"
+        android:layout_height="195dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createPhotoImageView" />
+        app:layout_constraintTop_toBottomOf="@+id/createPhotoLayout">
+
+        <ImageView
+            android:id="@+id/choosePhotoImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:contentDescription="@string/choose_image_button"
+            android:src="@drawable/knopka_file_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/choosePhotoButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#020202"
+            android:drawableLeft="@drawable/ic_image_24"
+            android:padding="8dp"
+            android:paddingStart="75dp"
+            android:paddingEnd="75dp"
+            android:text="@string/choose_photo"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

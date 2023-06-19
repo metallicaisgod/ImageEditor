@@ -2,7 +2,6 @@ package com.kirillmesh.imageeditor
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -86,22 +85,13 @@ class MainActivity : AppCompatActivity() {
                 findNavController(R.id.nav_host_fragment_content_main)
                     .navigate(
                         ChooseImageFragmentDirections
-                            .actionChooseImageFragmentToEditImageFragment(resizePhoto(bitmap, 4))
+                            .actionChooseImageFragmentToEditImageFragment(
+                                Utils.resizePhoto(bitmap, 4)
+                            )
                     )
                 }
             }
         }
-    }
-
-    private fun resizePhoto(bitmap: Bitmap, inSampleSize: Int): Bitmap {
-        if(inSampleSize > 1){
-            val w = bitmap.width
-            val h = bitmap.height
-            val newWidth = w / inSampleSize
-            val newHeight = h / inSampleSize
-            return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, false)
-        }
-        return bitmap
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

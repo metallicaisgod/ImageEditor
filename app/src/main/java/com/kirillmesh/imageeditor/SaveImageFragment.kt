@@ -58,9 +58,9 @@ class SaveImageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.editedImegeVIew.setImageBitmap(args.editedBitmap)
+        binding.editedImageView.setImageBitmap(args.editedBitmap)
 
-        binding.savePhotoImageView.setOnClickListener {
+        binding.savePhotoButton.setOnClickListener {
 
             val job = lifecycleScope.launch {
                 saveMediaToStorage(args.editedBitmap)
@@ -74,7 +74,7 @@ class SaveImageFragment : Fragment() {
             findNavController().navigate(R.id.action_saveImageFragment_to_chooseImageFragment)
         }
 
-        binding.sharePhotoImageView.setOnClickListener {
+        binding.sharePhotoButton.setOnClickListener {
 
             val job = lifecycleScope.launch {
                 shareImage(args.editedBitmap)

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Image Editor</string>
+    <string name="action_settings">Настройки</string>
+    <string name="next">Далее</string>
+    <string name="previous">Назад</string>
+    <string name="create_photo_button">Кнопка \"Сделать фото\"</string>
+    <string name="choose_image_button">Кнопка \"Выбрать фото\"</string>
+    <string name="done">Готово</string>
+    <string name="share_image_button">Кнопка \"Поделиться\"</string>
+    <string name="save_image_button">Кнопка \"Сохранить\"</string>
+    <string name="rotate_button">Кнопка \"Повернуть\"</string>
+    <string name="back_button">Кнопка \"Назад\"</string>
+    <string name="next_button">Кнопка \"Далее\"</string>
+    <string name="label_brush">Кисть</string>
+    <string name="label_shape">Фигура</string>
+    <string name="label_oval">Овал</string>
+    <string name="label_rectangle">Прямоугольник</string>
+    <string name="label_line">Линия</string>
+    <string name="label_arrow">Стрелка</string>
+    <string name="label_emoji">Эмодзи</string>
+    <string name="label_sticker">Стикер</string>
+    <string name="label_eraser">Ластик</string>
+    <string name="label_eraser_mode">Режим \"Ластик\"</string>
+    <string name="label_text">Текст</string>
+    <string name="label_filter">Фильтр</string>
+    <string name="label_adjust">Выравнивание</string>
+    <string name="label_crop_rotate">Обрезать/Повернуть</string>
+    <string name="filter_imageview">Картинка \"Фильтр\"</string>
+    <string name="sticker_imageview">Картинка \"Стикер\"</string>
+    <string name="tool_icon_imageview">Картинка \"Иконка интсрумента\"</string>
+    <string name="close">Закрыть</string>
+    <string name="opacity">Прозрачность</string>
+    <string name="shape">Фигура</string>
+    <string name="size">Размер</string>
+    <string name="edit_another_image">Редактировать другую картинку</string>
+    <string name="result_edited_image">Результирующая картинка</string>
+    <string name="share_your_iamge">Поделись своей картинкой!</string>
+    <string name="share">Поделиться</string>
+    <string name="save">Сохранить</string>
+    <string name="create_photo">Сделать фото</string>
+    <string name="choose_photo">Выбрать фото</string>
+    <string name="label_crop">Изменить</string>
+</resources>
