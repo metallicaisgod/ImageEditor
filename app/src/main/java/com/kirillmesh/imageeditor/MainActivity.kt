@@ -1,16 +1,21 @@
 package com.kirillmesh.imageeditor
 
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
 import com.kirillmesh.imageeditor.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-   // private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
     private val activityResultLauncher = registerForActivityResult(
@@ -36,6 +41,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -45,34 +52,57 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        //setSupportActionBar(binding.toolbar)
+        if(intent != null){
 
-        //val navController = findNavController(R.id.nav_host_fragment_content_main)
-        //appBarConfiguration = AppBarConfiguration(navController.graph)
-        //setupActionBarWithNavController(navController, appBarConfiguration)
+
+            val bitmapUri = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+            } else {
+                intent.getParcelableExtra(Intent.EXTRA_STREAM)
+            }
+
+            bitmapUri?.let{
+                val bitmap = if (Build.VERSION.SDK_INT > 27) {
+                    // on newer versions of Android, use the new decodeBitmap method
+                    val source: ImageDecoder.Source =
+                        ImageDecoder.createSource(
+                            contentResolver,
+                            bitmapUri
+                        )
+                    ImageDecoder.decodeBitmap(source) {
+                            decoder,
+                            _,
+                            _ ->
+                        decoder.isMutableRequired = true
+                    }
+                } else {
+                    // support older versions of Android by using getBitmap
+                    MediaStore.Images.Media.getBitmap(
+                        contentResolver,
+                        it
+                    )
+                }
+                if(bitmap != null){
+                findNavController(R.id.nav_host_fragment_content_main)
+                    .navigate(
+                        ChooseImageFragmentDirections
+                            .actionChooseImageFragmentToEditImageFragment(resizePhoto(bitmap, 4))
+                    )
+                }
+            }
+        }
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        menuInflater.inflate(R.menu.menu_main, menu)
-//        return true
-//    }
-//
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        return when (item.itemId) {
-//            R.id.action_settings -> true
-//            else -> super.onOptionsItemSelected(item)
-//        }
-//    }
-//
-//    override fun onSupportNavigateUp(): Boolean {
-//        val navController = findNavController(R.id.nav_host_fragment_content_main)
-//        return navController.navigateUp(appBarConfiguration)
-//                || super.onSupportNavigateUp()
-//    }
+    private fun resizePhoto(bitmap: Bitmap, inSampleSize: Int): Bitmap {
+        if(inSampleSize > 1){
+            val w = bitmap.width
+            val h = bitmap.height
+            val newWidth = w / inSampleSize
+            val newHeight = h / inSampleSize
+            return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, false)
+        }
+        return bitmap
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

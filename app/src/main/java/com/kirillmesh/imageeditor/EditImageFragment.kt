@@ -1,6 +1,5 @@
 package com.kirillmesh.imageeditor
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
@@ -40,6 +39,7 @@ class EditImageFragment : Fragment(), OnPhotoEditorListener, EditingToolsAdapter
     private lateinit var mShapeBuilder: ShapeBuilder
     private lateinit var mEmojiBSDFragment: EmojiBSDFragment
     private lateinit var mStickerBSDFragment: StickerBSDFragment
+    private lateinit var mShapeDialogFragment: ShapeDialogFragment
     private val mEditingToolsAdapter = EditingToolsAdapter(this)
     private val mFilterViewAdapter = FilterViewAdapter(this)
 
@@ -49,7 +49,7 @@ class EditImageFragment : Fragment(), OnPhotoEditorListener, EditingToolsAdapter
     private val shapePropertiesViewModel by lazy {
         ViewModelProvider(requireActivity())[ShapePropertiesViewModel::class.java]
     }
-    private var shapeProperties = ShapeProperties()
+    private lateinit var shapeProperties: ShapeProperties
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -127,6 +127,7 @@ class EditImageFragment : Fragment(), OnPhotoEditorListener, EditingToolsAdapter
             }
         }
 
+        shapePropertiesViewModel.getCurrentShapeProperties()
         shapePropertiesViewModel.shapeProperties.observe(viewLifecycleOwner){
             shapeProperties = it
         }
@@ -139,6 +140,20 @@ class EditImageFragment : Fragment(), OnPhotoEditorListener, EditingToolsAdapter
         mStickerBSDFragment.setStickerListener(this)
         mEmojiBSDFragment = EmojiBSDFragment()
         mEmojiBSDFragment.setEmojiListener(this)
+        mShapeDialogFragment = ShapeDialogFragment()
+        mShapeDialogFragment.setOnShapeDialogFragmentDone(
+            object : ShapeDialogFragment.OnShapeDialogFragmentDone{
+                override fun onDone() {
+                    mPhotoEditor.setBrushDrawingMode(true)
+                    mShapeBuilder = ShapeBuilder()
+                    mPhotoEditor.setShape(
+                        mShapeBuilder.withShapeType(shapeProperties.shapeType)
+                            .withShapeOpacity(shapeProperties.opacity)
+                            .withShapeColor(shapeProperties.colorCode)
+                            .withShapeSize(shapeProperties.shapeSize.toFloat())
+                    )
+                }
+            })
 
         with(binding) {
             cropButtons.setOnButtonsClickListener(object : CropToolsView.OnButtonsClickListener {
@@ -176,31 +191,12 @@ class EditImageFragment : Fragment(), OnPhotoEditorListener, EditingToolsAdapter
             when (toolType) {
                 ToolType.SHAPE -> {
                     currentToolTextView.setText(R.string.label_shape)
-                    val shapeDialogFragment =
-                        ShapeDialogFragment.show(requireActivity())
-                    shapeDialogFragment.setShapePropertiesListener(object :
-                    ShapeDialogFragment.ShapePropertiesListener {
-                        @SuppressLint("ResourceAsColor")
-                        override fun done(exitCode: ShapeDialogFragment.ExitCode) {
-                            if(exitCode == ShapeDialogFragment.ExitCode.EXIT_OK){
-                                mPhotoEditor.setBrushDrawingMode(true)
-                                mShapeBuilder = ShapeBuilder()
-                                mPhotoEditor.setShape(
-                                    mShapeBuilder.withShapeType(shapeProperties.shapeType)
-                                        .withShapeOpacity(shapeProperties.opacity)
-                                        .withShapeColor(shapeProperties.colorCode)
-                                        .withShapeSize(shapeProperties.shapeSize.toFloat())
-                                )
-                            } else {
-                                mPhotoEditor.setBrushDrawingMode(false)
-                            }
-                        }
-                    })
-
+                    showBottomSheetDialogFragment(mShapeDialogFragment)
                 }
 
                 ToolType.TEXT -> {
-                    val textEditorDialogFragment = TextEditorDialogFragment.show(requireActivity())
+                    val textEditorDialogFragment =
+                        TextEditorDialogFragment.show(requireActivity())
                     textEditorDialogFragment.setOnTextEditorListener(object :
                         TextEditorDialogFragment.TextEditorListener {
                         override fun onDone(inputText: String, colorCode: Int) {

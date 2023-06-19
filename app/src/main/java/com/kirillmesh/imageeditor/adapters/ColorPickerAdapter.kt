@@ -4,11 +4,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.view.setPadding
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewbinding.ViewBinding
 import com.kirillmesh.imageeditor.R
 import com.kirillmesh.imageeditor.databinding.ColorPickerItemListBinding
 import com.kirillmesh.imageeditor.databinding.ColorPickerItemListCheckedBinding

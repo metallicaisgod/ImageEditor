@@ -1,17 +1,21 @@
 package com.kirillmesh.imageeditor.adapters
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.kirillmesh.imageeditor.R
 import ja.burhanrashid52.photoeditor.shape.ShapeType
 
-class ShapePropertiesViewModel : ViewModel() {
+class ShapePropertiesViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _shapeProperties = MutableLiveData(ShapeProperties())
+    private val _shapeProperties = MutableLiveData<ShapeProperties>()
     val shapeProperties: LiveData<ShapeProperties>
         get() = _shapeProperties
 
-    private var currentShapeProperties = ShapeProperties()
+    private var currentShapeProperties = ShapeProperties(
+        colorCode = getApplication<Application>().applicationContext.getColor(R.color.black)
+    )
 
     fun getCurrentShapeProperties(){
         _shapeProperties.value = currentShapeProperties

@@ -8,7 +8,6 @@ import android.graphics.BitmapFactory
 import android.graphics.BitmapFactory.Options
 import android.graphics.ImageDecoder
 import android.graphics.Matrix
-import androidx.exifinterface.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -21,6 +20,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
+import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.kirillmesh.imageeditor.databinding.FragmentChooseImageBinding

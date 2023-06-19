@@ -34,7 +34,11 @@
         tools:layout="@layout/fragment_edit_image" >
         <action
             android:id="@+id/action_editImageFragment_to_saveImageFragment"
-            app:destination="@id/saveImageFragment" />
+            app:destination="@id/saveImageFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_editImageFragment_to_chooseImageFragment"
             app:destination="@id/chooseImageFragment"

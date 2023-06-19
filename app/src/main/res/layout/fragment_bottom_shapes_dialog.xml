@@ -7,36 +7,6 @@
     android:layout_height="wrap_content"
     android:background="#B3000000">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/buttonsLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/shapeTypeTextView">
-
-        <ImageView
-            android:id="@+id/okImageView"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_check"
-            android:layout_marginStart="10dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <ImageView
-            android:id="@+id/closeImageView"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_close"
-            android:layout_marginStart="10dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
     <TextView
         android:id="@+id/shapeTypeTextView"
         android:layout_width="0dp"
@@ -49,7 +19,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonsLayout" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <RadioGroup
         android:id="@+id/shapeRadioGroup"

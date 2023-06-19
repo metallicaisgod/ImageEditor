@@ -1,12 +1,12 @@
 package com.kirillmesh.imageeditor
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioGroup
 import android.widget.SeekBar
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.kirillmesh.imageeditor.adapters.ColorPickerAdapter
@@ -24,13 +24,15 @@ class ShapeDialogFragment : BottomSheetDialogFragment(), SeekBar.OnSeekBarChange
         ViewModelProvider(requireActivity())[ShapePropertiesViewModel::class.java]
     }
 
-    private var mShapePropertiesListener: ShapePropertiesListener? = null
+    private lateinit var currentProperties: ShapeProperties
+    private var onShapeDialogFragmentDone: OnShapeDialogFragmentDone? = null
 
+    interface OnShapeDialogFragmentDone {
+        fun onDone()
+    }
 
-    private var currentProperties = ShapeProperties()
-
-    interface ShapePropertiesListener {
-        fun done(exitCode: ExitCode)
+    fun setOnShapeDialogFragmentDone(shapeDialogFragmentDone: OnShapeDialogFragmentDone){
+        onShapeDialogFragmentDone = shapeDialogFragmentDone
     }
 
     override fun onCreateView(
@@ -46,7 +48,8 @@ class ShapeDialogFragment : BottomSheetDialogFragment(), SeekBar.OnSeekBarChange
         super.onViewCreated(view, savedInstanceState)
 
         shapePropertiesViewModel.getCurrentShapeProperties()
-        currentProperties = shapePropertiesViewModel.shapeProperties.value ?: ShapeProperties()
+        currentProperties = shapePropertiesViewModel.shapeProperties.value
+            ?: ShapeProperties(requireContext().getColor(R.color.black))
 
         with(binding) {
             when(currentProperties.shapeType) {
@@ -94,20 +97,7 @@ class ShapeDialogFragment : BottomSheetDialogFragment(), SeekBar.OnSeekBarChange
                 }
             })
             shapeColorsRecyclerView.adapter = colorPickerAdapter
-
-            okImageView.setOnClickListener {
-                mShapePropertiesListener?.done(ExitCode.EXIT_OK)
-                dismiss()
-            }
-            closeImageView.setOnClickListener {
-                mShapePropertiesListener?.done(ExitCode.EXIT_FAIL)
-                dismiss()
-            }
         }
-    }
-
-    fun setShapePropertiesListener(propertiesListener: ShapePropertiesListener?) {
-        mShapePropertiesListener = propertiesListener
     }
 
     override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
@@ -125,20 +115,8 @@ class ShapeDialogFragment : BottomSheetDialogFragment(), SeekBar.OnSeekBarChange
         _binding = null
     }
 
-    enum class ExitCode {
-        EXIT_OK, EXIT_FAIL
-    }
-
-    companion object {
-
-        private val TAG: String = ShapeDialogFragment::class.java.simpleName
-
-        fun show(
-            fragmentActivity: FragmentActivity
-        ): ShapeDialogFragment {
-            val fragment = ShapeDialogFragment()
-            fragment.show(fragmentActivity.supportFragmentManager, TAG)
-            return fragment
-        }
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        onShapeDialogFragmentDone?.onDone()
     }
 }
