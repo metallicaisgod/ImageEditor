@@ -17,4 +17,4 @@
 
 https://github.com/CanHub/Android-Image-Cropper
 
-https://github.com/burhanrashid52/PhotoEditor <- отсюда так же был взять дизайн (ибо я не дизайнер, остальной дизайн был придуман моей женой на базе этого)
+https://github.com/burhanrashid52/PhotoEditor <- отсюда так же был взять дизайн (ибо я не дизайнер, дизайн первого экрана был придуман моей женой на базе этого)
