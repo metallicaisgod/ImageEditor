@@ -13,7 +13,7 @@
 ![Screenshot_2023-06-29-16-50-51-851_com kirillmesh imageeditor](https://github.com/metallicaisgod/ImageEditor/assets/7294216/7505489b-0b61-4c69-a595-cd90d74372d6)
 ![Screenshot_2023-06-29-16-50-44-686_com kirillmesh imageeditor](https://github.com/metallicaisgod/ImageEditor/assets/7294216/2ce29be7-0b75-4b12-a452-211187f30168)
 
-При создании приложения использовались следующие библиотеки
+При создании приложения использовались следующие библиотеки:
 
 https://github.com/CanHub/Android-Image-Cropper
 
